@@ -2,27 +2,14 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 import random
 
-<<<<<<< HEAD
 class ArithmeticQuiz:
-=======
-
-# Defining the main application class
-class ArithmethicQuiz:
->>>>>>> 8de678e70b39d2d0e7116a4fb63d5aee125fde1f
     def __init__(self, root):
         self.root = root
-        self.root.title("Arithmetic Quiz")
+        self.root.title("Math Quiz")
         self.root.geometry("500x400")
         self.root.resizable(False, False)
-<<<<<<< HEAD
         
         # Quiz variables
-=======
-        self.root.configure(bg="#11e8f8")
-
-
-        # Creating the Quiz Variables
->>>>>>> 8de678e70b39d2d0e7116a4fb63d5aee125fde1f
         self.difficulty = None
         self.score = 0
         self.current_question = 0
@@ -32,37 +19,39 @@ class ArithmethicQuiz:
         self.num1 = 0
         self.num2 = 0
         self.correct_answer = 0
-<<<<<<< HEAD
         
         # Create main frame
         self.main_frame = ttk.Frame(self.root, padding="20")
         self.main_frame.pack(fill=tk.BOTH, expand=True)
         
         # Start with menu
+        # Bind Enter once for submitting answers (guarded in checkAnswer)
+        self.root.bind('<Return>', lambda event: self.checkAnswer())
+
         self.displayMenu()
     
     def displayMenu(self):
-        """Display the difficulty level menu at the beginning"""
+        #Display the difficulty level menu at the beginning#
         self.clearFrame()
         
-        title_label = ttk.Label(self.main_frame, text="ARITHMETIC QUIZ", 
+        title_label = ttk.Label(self.main_frame, text="BRAIN TEASER", 
                                font=("Arial", 16, "bold"))
         title_label.pack(pady=20)
         
-        subtitle_label = ttk.Label(self.main_frame, text="DIFFICULTY LEVEL",
+        subtitle_label = ttk.Label(self.main_frame, text="CHOOSE THE DIFFICULTY LEVEL",
                                   font=("Arial", 12, "bold"))
         subtitle_label.pack(pady=10)
         
         # Difficulty buttons
-        easy_btn = ttk.Button(self.main_frame, text="1. Easy (Single-digit numbers)", 
+        easy_btn = ttk.Button(self.main_frame, text="1. Basic (Single-digit numbers)", 
                              command=lambda: self.startQuiz("easy"))
         easy_btn.pack(pady=5, fill=tk.X)
         
-        moderate_btn = ttk.Button(self.main_frame, text="2. Moderate (Double-digit numbers)", 
+        moderate_btn = ttk.Button(self.main_frame, text="2. Intermediate (Double-digit numbers)", 
                                  command=lambda: self.startQuiz("moderate"))
         moderate_btn.pack(pady=5, fill=tk.X)
         
-        advanced_btn = ttk.Button(self.main_frame, text="3. Advanced (4-digit numbers)", 
+        advanced_btn = ttk.Button(self.main_frame, text="3. Expert (4-digit numbers)", 
                                  command=lambda: self.startQuiz("advanced"))
         advanced_btn.pack(pady=5, fill=tk.X)
         
@@ -73,62 +62,12 @@ class ArithmethicQuiz:
         instructions.pack(pady=20)
     
     def startQuiz(self, difficulty):
-        """Start the quiz with selected difficulty"""
-=======
-
-        # Creating the main frame
-        self.main_frame = ttk.Frame(self.root, padding="20")
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Start with Menu
-        self.displayMenu()
-
-    def clearFrame(self):
-        for widget in self.main_frame.winfo_children():
-            widget.destroy()
-
-    def displayMenu(self):
-        """Displaying the difficulty level menu at the beginning of the quiz."""
-        self.clearFrame()
-
-        title_label = ttk.Label(self.main_frame,
-                               text="The Digit Drill",
-                               font=("Helvetica", 24, "bold"))
-        title_label.pack(pady=20)
-
-        subtitle_label = ttk.Label(self.main_frame, text="Choose your difficulty level:",
-                                   font=("Helvetica", 16, "bold"))
-        subtitle_label.pack(pady=10)
-
-        # Setting up difficulty buttons
-        easy_button = ttk.Button(self.main_frame, text="1. Basic (Single-digit numbers)",
-                                 command=lambda: self.startQuiz("easy"))
-        easy_button.pack(pady=5, fill=tk.X)
-
-        moderate_button = ttk.Button(self.main_frame, text="2. Intermidiate (Double-digit numbers)",
-                                     command=lambda: self.startQuiz("moderate"))
-        moderate_button.pack(pady=5, fill=tk.X)
-
-        advanced_button = ttk.Button(self.main_frame, text="3. Expert (Triple-digit numbers)",
-                                     command=lambda: self.startQuiz("advanced"))
-        advanced_button.pack(pady=5, fill=tk.X)
-
-        # Setting up the Instructions
-        instructions = ttk.Label(self.main_frame,
-                                text="\n• 10 questions per quiz\n• 10 points for correct first attempt\n• "
-                                     "5 points for correct second attempt",
-                                justify=tk.LEFT)
-        instructions.pack(pady=20)
-
-    def startQuiz(self, difficulty):
-        """Starting the quiz with the selected difficulty level."""
->>>>>>> 8de678e70b39d2d0e7116a4fb63d5aee125fde1f
         self.difficulty = difficulty
         self.score = 0
+        # current_question is 0 before any question shown; nextQuestion will increment
         self.current_question = 0
         self.attempts = 0
         self.nextQuestion()
-<<<<<<< HEAD
     
     def randomInt(self):
         """Generate random numbers based on difficulty level"""
@@ -144,174 +83,130 @@ class ArithmethicQuiz:
         return random.choice(['+', '-'])
     
     def generateProblem(self):
-        """Generate a new arithmetic problem"""
+        """Generate a new arithmetic problem (numbers + operation) and compute the correct answer."""
         self.num1, self.num2 = self.randomInt()
         self.current_operation = self.decideOperation()
-        
+
         # Calculate correct answer
-=======
-
-    def randomINT(self):
-        """Generating random integers based on the selected difficulty level."""
-        if self.difficulty == "easy":
-            return random.randint(1, 9), random.randint(1, 9)
-        elif self.difficulty == "moderate":
-            return random.randint(10, 99), random.randint(10, 99)
-        elif self.difficulty == "advanced":
-            return random.randint(100, 999), random.randint(100, 999)
-
-    def decideOperation(self):
-        """Randomly selecting an arithmetic operation."""
-        return random.choice(['+', '-'])
-
-    def generateProblem(self):
-        """Generating a new arithmetic problem based on the selected operation."""
-        self.num1, self.num2 = self.randomINT()
-        self.current_operation = self.decideOperation()
-
-        # Calculating the correct answer
->>>>>>> 8de678e70b39d2d0e7116a4fb63d5aee125fde1f
         if self.current_operation == '+':
             self.correct_answer = self.num1 + self.num2
         else:
             self.correct_answer = self.num1 - self.num2
-<<<<<<< HEAD
-        
+
         return f"{self.num1} {self.current_operation} {self.num2} = "
     
-    def displayProblem(self):
-        """Display the current problem and accept answer"""
+    def displayProblem(self, new_problem=True):
+        """Display the current problem and accept answer.
+
+        If new_problem is True, a new problem will be generated. If False,
+        the previously generated problem is redisplayed (used for retries).
+        """
         self.clearFrame()
-        
+
         # Progress indicator
-        progress_label = ttk.Label(self.main_frame, 
-                                  text=f"Question {self.current_question + 1} of {self.total_questions}",
+        progress_label = ttk.Label(self.main_frame,
+                                  text=f"Question {self.current_question} of {self.total_questions}",
                                   font=("Arial", 10))
         progress_label.pack(pady=5)
-        
+
         # Score display
-        score_label = ttk.Label(self.main_frame, 
+        score_label = ttk.Label(self.main_frame,
                                text=f"Current Score: {self.score}",
                                font=("Arial", 10))
         score_label.pack(pady=5)
-        
-        # Problem display
-        problem_text = self.generateProblem()
+
+        # Problem display (generate a new one unless we're retrying)
+        if new_problem:
+            problem_text = self.generateProblem()
+        else:
+            # reuse existing numbers/operation
+            problem_text = f"{self.num1} {self.current_operation} {self.num2} = "
         problem_label = ttk.Label(self.main_frame, text=problem_text,
                                  font=("Arial", 18, "bold"))
         problem_label.pack(pady=30)
-        
+
         # Answer entry
+        # Ensure answer_var exists so Enter binding is safe at all times
         self.answer_var = tk.StringVar()
         answer_entry = ttk.Entry(self.main_frame, textvariable=self.answer_var,
                                 font=("Arial", 14), width=15, justify=tk.CENTER)
         answer_entry.pack(pady=10)
         answer_entry.focus()
-        
+
         # Submit button
         submit_btn = ttk.Button(self.main_frame, text="Submit Answer",
                                command=self.checkAnswer)
         submit_btn.pack(pady=10)
         
-        # Bind Enter key to submit
-        self.root.bind('<Return>', lambda event: self.checkAnswer())
+    # (Enter binding is done once in __init__)
     
-    def checkAnswer(self):
-        """Check if the user's answer is correct"""
+    def checkAnswer(self, event=None):
+        """Check if the user's answer is correct.
+
+        This method is safe to call even if no answer field is active.
+        """
+        # If there's no active answer variable (e.g., on menus), ignore
+        if not getattr(self, 'answer_var', None):
+            return
+
+        raw = self.answer_var.get().strip()
+        if raw == "":
+            messagebox.showerror("No Input", "Please type your answer.")
+            return
+
         try:
-            user_answer = int(self.answer_var.get())
-            self.attempts += 1
-            
-=======
-
-        return f"{self.num1} {self.current_operation} {self.num2} = ?"
-
-    def displayProblem(self):
-        """Displaying the current problem to the user."""
-        self.clearFrame()
-
-        # Checking the progress
-        progress_label = ttk.Label(self.main_frame,
-                                   text=f"Question {self.current_question + 1} of {self.total_questions}",
-                                   font=("Helvetica", 14))
-        progress_label.pack(pady=5)
-
-        # Score output
-        score_label = ttk.Label(self.main_frame,
-                               text=f"Current score: {self.score}",
-                               font=("Helvetica", 14))
-        score_label.pack(pady=5)
-
-        # Problem label
-        problem_text = self.generateProblem()
-        problem_label = ttk.Label(self.main_frame, text=problem_text,
-                                 font=("Helvetica", 18, "bold"))
-        problem_label.pack(pady=30)
-
-        # Answer Space
-        self.answer_var = tk.StringVar()
-        answer_entry = ttk.Entry(self.main_frame,
-                                 textvariable=self.answer_var,
-                                 font=("Helvetica", 16),
-                                 width=15,
-                                 justify=tk.CENTER)
-        answer_entry.pack(pady=10)
-        answer_entry.focus()
-
-        # Submit Button
-        submit_button = ttk.Button(self.main_frame,
-                                   text="Submit Answer",
-                                   command=self.checkAnswer)
-        submit_button.pack(pady=20)
-
-        # Bind Enter key to submit
-        self.root.bind('<Return>', lambda event: self.checkAnswer())
-
-    def checkAnswer(self):
-        """Check if the user's answer is correct and update"""
-        try:
-            user_answer = int(self.answer_var.get())
-            self.attempts += 1
-
->>>>>>> 8de678e70b39d2d0e7116a4fb63d5aee125fde1f
-            if user_answer == self.correct_answer:
-                self.isCorrect(True)
-            else:
-                self.isCorrect(False)
-<<<<<<< HEAD
-                
+            user_answer = int(raw)
         except ValueError:
-            messagebox.showerror("Invalid Input", "Please enter a valid number!")
+            messagebox.showerror("Invalid Input", "Please enter a valid number.")
+            return
+
+        # Count this attempt
+        self.attempts += 1
+
+        if user_answer == self.correct_answer:
+            self.isCorrect(True)
+        else:
+            self.isCorrect(False)
     
     def isCorrect(self, correct):
-        """Handle correct/incorrect answers and update score"""
+        """Handle correct/incorrect answers and update score."""
         if correct:
             if self.attempts == 1:
                 points = 10
-                message = "Correct! +10 points"
+                message = "Good! Correct on the first try. +10 points"
             else:
                 points = 5
-                message = "Correct on second try! +5 points"
-            
+                message = "Amazing! Correct on the second try. +5 points"
+
             self.score += points
             messagebox.showinfo("Correct!", f"{message}\nYour score: {self.score}")
+            # clear answer for next question
+            self.answer_var.set('')
             self.nextQuestion()
         else:
             if self.attempts == 1:
-                messagebox.showerror("Incorrect", "Wrong answer! Try one more time.")
-                self.displayProblem()  # Show same problem again
+                # First incorrect attempt: allow one retry of same problem
+                messagebox.showwarning("Incorrect", "Sadly, That's not correct. Try one more time.")
+                # Redisplay the same problem (do not generate a new one)
+                self.displayProblem(new_problem=False)
             else:
-                messagebox.showerror("Incorrect", 
-                                   f"Wrong again! The correct answer was {self.correct_answer}")
+                # Second incorrect attempt: show correct answer and move on
+                messagebox.showinfo("Incorrect", f"Unfortunately, Wrong again. The correct answer was {self.correct_answer}.")
+                self.answer_var.set('')
                 self.nextQuestion()
     
     def nextQuestion(self):
-        """Move to the next question or end quiz"""
+        """Move to the next question or end quiz.
+
+        current_question is 1-based once the first question is shown.
+        """
         self.current_question += 1
+        # reset attempts for the upcoming question
         self.attempts = 0
-        
-        if self.current_question < self.total_questions:
-            self.displayProblem()
+
+        # Show question while current_question is within the total
+        if self.current_question <= self.total_questions:
+            self.displayProblem(new_problem=True)
         else:
             self.displayResults()
     
@@ -373,59 +268,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-=======
-
-        except ValueError:
-            messagebox.showerror("Invalid Input", "Please enter a valid digit!")
-
-    def isCorrect(self, correct):
-        """Handle correct/incorrect answers and update score."""
-        if correct:
-            if self.attempts == 1:
-                self.score += 10
-                messagebox.showinfo("Well done", "+10 points! You got it on the first try!")
-            elif self.attempts == 2:
-                self.score += 5
-                messagebox.showinfo("Good job!", "+5 points! Good job! You got it on the second try!")
-            self.nextQuestion()
-        else:
-            if self.attempts < 2:
-                messagebox.showwarning("Try Again", "Incorrect! Please try again.")
-            else:
-                messagebox.showinfo("Answer Revealed", f"Sorry, the correct answer was {self.correct_answer}.")
-                self.nextQuestion()
-
-    def nextQuestion(self):
-        """Proceed to the next question or end the quiz."""
-        self.current_question += 1
-        self.attempts = 0
-
-        if self.current_question < self.total_questions:
-            self.displayProblem()
-        else:
-            self.endQuiz()
-
-    def endQuiz(self):
-        self.clearFrame()
-        result_label = ttk.Label(self.main_frame,
-                                text=f"Quiz Complete!\nYour final score: {self.score} / {self.total_questions * 10}",
-                                font=("Helvetica", 18, "bold"))
-        result_label.pack(pady=40)
-        restart_button = ttk.Button(self.main_frame, text="Restart Quiz", command=self.displayMenu)
-        restart_button.pack(pady=20)
-
-# To run the app
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ArithmethicQuiz(root)
-    root.mainloop()
-
-
-
-
-
-
-
-
-                    
->>>>>>> 8de678e70b39d2d0e7116a4fb63d5aee125fde1f
