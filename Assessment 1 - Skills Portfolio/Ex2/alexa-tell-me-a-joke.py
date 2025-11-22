@@ -46,7 +46,7 @@ class JokeTellingAssistant:
         # Load jokes from file or use fallback
         self.jokes = self.load_jokes()
         self.current_joke = None
-        self.current_punchline = None
+        self.current_punchline = None  
 
         # Build UI
         self.create_widgets()

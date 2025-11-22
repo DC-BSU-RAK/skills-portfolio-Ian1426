@@ -2,6 +2,10 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 import random
 
+# UI colors
+MAIN_BG = '#e6f4ff'   # soft light blue
+BUTTON_BG = '#e6ffe6' # soft light green
+
 class ArithmeticQuiz:
     def __init__(self, root):   # Initializing the main application window
         self.root = root    # Setting up the main window
@@ -20,9 +24,11 @@ class ArithmeticQuiz:
         self.num2 = 0   # Second number in the problem
         self.correct_answer = 0 # Correct answer for current problem
         
-        # Creating the main frame
-        self.main_frame = ttk.Frame(self.root, padding="20")    # Main frame for content
-        self.main_frame.pack(fill=tk.BOTH, expand=True)     #main frame packing
+        # Creating the main frame (use tk.Frame so background color can be applied)
+        self.main_frame = tk.Frame(self.root, bg=MAIN_BG, padx=20, pady=20)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        # apply main background to root as well
+        self.root.configure(bg=MAIN_BG)
         
         # Starting with menu
         # Binding Enter once for submitting answers (guarded in checkAnswer)
@@ -34,32 +40,35 @@ class ArithmeticQuiz:
         #Displaying the difficulty level menu at the beginning of the quiz#
         self.clearFrame()   
 
-        title_label = ttk.Label(self.main_frame, text="BRAIN TEASER",   #Title label
-                               font=("Times New Roman", 16, "bold"))  
-        title_label.pack(pady=20)    #title label packing
+        title_label = tk.Label(self.main_frame, text="BRAIN TEASER",
+                       font=("Times New Roman", 16, "bold"), bg=MAIN_BG)
+        title_label.pack(pady=20)
         
-        subtitle_label = ttk.Label(self.main_frame, text="CHOOSE THE DIFFICULTY LEVEL",      #Subtitle label   
-                                  font=("Times New Roman", 12, "bold"))       
-        subtitle_label.pack(pady=10)        #subtitle label packing
+        subtitle_label = tk.Label(self.main_frame, text="CHOOSE THE DIFFICULTY LEVEL",
+                      font=("Times New Roman", 12, "bold"), bg=MAIN_BG)
+        subtitle_label.pack(pady=10)
         
-        # Input Difficulty buttons
-        easy_btn = ttk.Button(self.main_frame, text="1. Basic (Single-digit numbers)",      #easy button
-                             command=lambda: self.startQuiz("easy"))        
-        easy_btn.pack(pady=5, fill=tk.X)        #easy button packing
-        
-        moderate_btn = ttk.Button(self.main_frame, text="2. Intermediate (Double-digit numbers)",      #moderate button 
-                                 command=lambda: self.startQuiz("moderate"))        
-        moderate_btn.pack(pady=5, fill=tk.X)        #moderate button packing
-        
-        advanced_btn = ttk.Button(self.main_frame, text="3. Expert (4-digit numbers)",      #advanced button
-                                 command=lambda: self.startQuiz("advanced"))        
-        advanced_btn.pack(pady=5, fill=tk.X)    #advanced button packing
+        # Input Difficulty buttons on a soft green background
+        btn_area = tk.Frame(self.main_frame, bg=BUTTON_BG)
+        btn_area.pack(pady=5, fill=tk.X)
+
+        easy_btn = ttk.Button(btn_area, text="1. Basic (Single-digit numbers)",
+                     command=lambda: self.startQuiz("easy"))
+        easy_btn.pack(pady=5, fill=tk.X, padx=5)
+
+        moderate_btn = ttk.Button(btn_area, text="2. Intermediate (Double-digit numbers)",
+                     command=lambda: self.startQuiz("moderate"))
+        moderate_btn.pack(pady=5, fill=tk.X, padx=5)
+
+        advanced_btn = ttk.Button(btn_area, text="3. Expert (4-digit numbers)",
+                     command=lambda: self.startQuiz("advanced"))
+        advanced_btn.pack(pady=5, fill=tk.X, padx=5)
         
         # Guide Instructions
-        instructions = ttk.Label(self.main_frame,       #instructions label
-                                text="\n• 10 questions per quiz\n• 10 points for correct first attempt\n• 5 points for correct second attempt",
-                                justify=tk.LEFT)    
-        instructions.pack(pady=20)  #instructions label packing
+        instructions = tk.Label(self.main_frame,
+                    text="\n• 10 questions per quiz\n• 10 points for correct first attempt\n• 5 points for correct second attempt",
+                    justify=tk.LEFT, bg=MAIN_BG)
+        instructions.pack(pady=20)
     
     def startQuiz(self, difficulty):    #Starting the quiz with selected difficulty level
         self.difficulty = difficulty    # Setting difficulty level
@@ -104,16 +113,16 @@ class ArithmeticQuiz:
         self.clearFrame() # Clearing previous widgets
 
         # Progress indicator 
-        progress_label = ttk.Label(self.main_frame, #progress label
-                                  text=f"Question {self.current_question} of {self.total_questions}",
-                                  font=("Times New Roman", 10))
-        progress_label.pack(pady=5) #progress label packing
+        progress_label = tk.Label(self.main_frame,
+                      text=f"Question {self.current_question} of {self.total_questions}",
+                      font=("Times New Roman", 10), bg=MAIN_BG)
+        progress_label.pack(pady=5)
 
         # Score display
-        score_label = ttk.Label(self.main_frame, #score label
-                               text=f"Current Score: {self.score}",
-                               font=("Times New Roman", 10))
-        score_label.pack(pady=5) #score label packing
+        score_label = tk.Label(self.main_frame,
+                       text=f"Current Score: {self.score}",
+                       font=("Times New Roman", 10), bg=MAIN_BG)
+        score_label.pack(pady=5)
 
         # Problem display (generate a new one unless we're retrying)
         if new_problem:
@@ -121,9 +130,9 @@ class ArithmeticQuiz:
         else:
             # reuse existing numbers/operation
             problem_text = f"{self.num1} {self.current_operation} {self.num2} = " #existing problem string
-        problem_label = ttk.Label(self.main_frame, text=problem_text, #problem label
-                                 font=("Times New Roman", 18, "bold")) 
-        problem_label.pack(pady=30) #problem label packing
+        problem_label = tk.Label(self.main_frame, text=problem_text,
+                     font=("Times New Roman", 18, "bold"), bg=MAIN_BG)
+        problem_label.pack(pady=30)
 
         # Answer entry
         # Ensure answer_var exists so Enter binding is safe at all times
@@ -216,20 +225,20 @@ class ArithmeticQuiz:
         self.clearFrame()           # Clearing previous widgets
         
         # Final score
-        score_label = ttk.Label(self.main_frame, text="QUIZ COMPLETED!",        #final score label
-                               font=("Times New Roman", 16, "bold"))  
-        score_label.pack(pady=20)                                           #final score label packing
-        
-        score_text = ttk.Label(self.main_frame,                         #final score text
-                              text=f"Final Score: {self.score}/100",
-                              font=("Times New Roman", 14))
-        score_text.pack(pady=10)                                #final score text packing
-        
+        score_label = tk.Label(self.main_frame, text="QUIZ COMPLETED!",
+                       font=("Times New Roman", 16, "bold"), bg=MAIN_BG)
+        score_label.pack(pady=20)
+
+        score_text = tk.Label(self.main_frame,
+                      text=f"Final Score: {self.score}/100",
+                      font=("Times New Roman", 14), bg=MAIN_BG)
+        score_text.pack(pady=10)
+
         # Grade calculation
-        grade = self.calculateGrade()                   #calculating grade
-        grade_label = ttk.Label(self.main_frame, text=f"Grade: {grade}",    
-                               font=("Times New Roman", 12, "bold"))
-        grade_label.pack(pady=10)                       #grade label packing
+        grade = self.calculateGrade()
+        grade_label = tk.Label(self.main_frame, text=f"Grade: {grade}",
+                       font=("Times New Roman", 12, "bold"), bg=MAIN_BG)
+        grade_label.pack(pady=10)
         
         # Play again buttons
         play_again_btn = ttk.Button(self.main_frame, text="Play Again",     #play again button
