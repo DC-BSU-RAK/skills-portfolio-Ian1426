@@ -2,75 +2,118 @@ import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 import os
 
+"""Student Marks Management GUI
+
+This module provides a small Tkinter application to manage student records
+and marks. The UI shows records, allows adding/updating/deleting students,
+and computes simple statistics. The edits here are purely to make the code
+more readable (constants, docstrings) while preserving original behaviour.
+
+The user requested comments explaining the code; inline comments are
+added throughout to clarify intent and important steps without changing
+the runtime behavior.
+"""
+
+# Configuration constants: centralize common values so they're easy to change
+DATA_FILE = "studentMarks.txt"  # file used to persist student records
+COURSEWORK_MAX = 60  # total possible coursework marks (3 items x 20 each)
+EXAM_MAX = 100      # max exam mark
+TOTAL_POSSIBLE = COURSEWORK_MAX + EXAM_MAX  # combined total for percentage calcs
+# UI theme colors
+MAIN_BG = "#e6f2ff"   # soft blue background for main area
+BUTTON_BG = "#d9f2e6" # soft green background for button/control area
+
 class StudentMarksApp:
     def __init__(self, root):
+        # Keep a reference to the main Tk root window
         self.root = root
+        # Set window title and a reasonable default size
         self.root.title("Student Marks Management System")
         self.root.geometry("900x700")
-        
-        # Initialize data storage
+
+        # In-memory list of student dicts. Each entry has keys:
+        # 'code' (int), 'name' (str), 'course_marks' (list of 3 ints), 'exam_mark' (int)
         self.students = []
+        # Load existing data from disk (or create sample data if missing)
         self.load_data()
-        
-        # Create GUI
+
+        # Build the UI: menu and main display area
         self.create_menu()
         self.create_main_display()
         
     def load_data(self):
         """Load student data from the file"""
         try:
-            file_path = "studentMarks.txt"
-            if not os.path.exists(file_path):
-                # Create sample data if file doesn't exist
+            # If the data file does not exist, populate with sample data and exit
+            if not os.path.exists(DATA_FILE):
                 self.create_sample_data()
                 return
-                
-            with open(file_path, 'r') as file:
+
+            # Read all lines from the file. The expected format is:
+            # Line 1: number of student records (N)
+            # Next N lines: code,name,mark1,mark2,mark3,exam
+            with open(DATA_FILE, 'r') as file:
                 lines = file.readlines()
-                
-            self.students = []  # Clear existing data
-                
-            # First line is number of students
+
+            # Reset the in-memory list before loading
+            self.students = []
+
+            # If file contains content, parse it cautiously to avoid crashes
             if lines:
+                # First line should be an integer count
                 num_students = int(lines[0].strip())
-                
-                # Process each student line
+
+                # Iterate over up to num_students lines (but don't exceed file length)
                 for i in range(1, min(num_students + 1, len(lines))):
                     line = lines[i].strip()
-                    if line:
-                        parts = line.split(',')
-                        if len(parts) >= 6:
-                            student_code = int(parts[0])
-                            student_name = parts[1]
-                            course_marks = [int(parts[2]), int(parts[3]), int(parts[4])]
-                            exam_mark = int(parts[5])
-                            
-                            student = {
-                                'code': student_code,
-                                'name': student_name,
-                                'course_marks': course_marks,
-                                'exam_mark': exam_mark
-                            }
-                            self.students.append(student)
+                    if not line:
+                        # Skip empty lines gracefully
+                        continue
+                    parts = line.split(',')
+                    if len(parts) < 6:
+                        # Skip malformed lines that don't have expected fields
+                        continue
+
+                    # Parse fields; convert numeric strings to ints
+                    student_code = int(parts[0])
+                    student_name = parts[1]
+                    course_marks = [int(parts[2]), int(parts[3]), int(parts[4])]
+                    exam_mark = int(parts[5])
+
+                    # Build a student dict and append to the list
+                    student = {
+                        'code': student_code,
+                        'name': student_name,
+                        'course_marks': course_marks,
+                        'exam_mark': exam_mark
+                    }
+                    self.students.append(student)
                         
         except Exception as e:
+            # On any error while loading, inform the user and fall back to sample data
             messagebox.showerror("Error", f"Failed to load data: {str(e)}")
             self.create_sample_data()
     
     def save_data(self):
         """Save student data to the file"""
         try:
-            with open("studentMarks.txt", 'w') as file:
+            # Write the count line followed by one student per line in CSV format
+            with open(DATA_FILE, 'w') as file:
                 file.write(f"{len(self.students)}\n")
                 for student in self.students:
-                    file.write(f"{student['code']},{student['name']},{student['course_marks'][0]},{student['course_marks'][1]},{student['course_marks'][2]},{student['exam_mark']}\n")
+                    # Maintain the same CSV format the original code expected
+                    file.write(
+                        f"{student['code']},{student['name']},{student['course_marks'][0]},{student['course_marks'][1]},{student['course_marks'][2]},{student['exam_mark']}\n"
+                    )
             return True
         except Exception as e:
+            # If saving fails, surface an error to the user and return False
             messagebox.showerror("Error", f"Failed to save data: {str(e)}")
             return False
     
     def create_sample_data(self):
         """Create sample data for testing"""
+        # Provide a small set of sample students so the UI is usable on first run
         sample_students = [
             {"code": 8439, "name": "Jake Hobbs", "course_marks": [10, 11, 10], "exam_mark": 43},
             {"code": 7562, "name": "Sarah Smith", "course_marks": [15, 14, 16], "exam_mark": 78},
@@ -79,15 +122,18 @@ class StudentMarksApp:
             {"code": 5289, "name": "Tom Brown", "course_marks": [8, 9, 7], "exam_mark": 35}
         ]
         self.students = sample_students
+        # Persist sample data so subsequent runs will load it
         self.save_data()
     
     def calculate_student_stats(self, student):
         """Calculate statistics for a student"""
+        # Sum the three coursework marks and add the exam mark
         total_coursework = sum(student['course_marks'])
         total_marks = total_coursework + student['exam_mark']
-        percentage = (total_marks / 160) * 100
-        
-        # Determine grade
+        # Compute percentage against the defined total possible marks
+        percentage = (total_marks / TOTAL_POSSIBLE) * 100
+
+        # Determine grade using standard cutoffs used by the original code
         if percentage >= 70:
             grade = 'A'
         elif percentage >= 60:
@@ -98,7 +144,8 @@ class StudentMarksApp:
             grade = 'D'
         else:
             grade = 'F'
-            
+
+        # Return a small stats dict used by multiple display routines
         return {
             'total_coursework': total_coursework,
             'exam_mark': student['exam_mark'],
@@ -110,15 +157,15 @@ class StudentMarksApp:
         """Create the main menu"""
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        
-        # File menu
+
+        # File menu: refresh or exit
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Refresh Data", command=self.refresh_data)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.root.quit)
-        
-        # View menu
+
+        # View menu: show all / individual / highest / lowest
         view_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="View", menu=view_menu)
         view_menu.add_command(label="All Student Records", command=self.view_all_students)
@@ -126,8 +173,8 @@ class StudentMarksApp:
         view_menu.add_separator()
         view_menu.add_command(label="Highest Overall Mark", command=self.show_highest_mark)
         view_menu.add_command(label="Lowest Overall Mark", command=self.show_lowest_mark)
-        
-        # Sort menu
+
+        # Sort menu: multiple sorting options (delegates to sort_students)
         sort_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Sort", menu=sort_menu)
         sort_menu.add_command(label="By Name (Ascending)", command=lambda: self.sort_students('name', True))
@@ -136,8 +183,8 @@ class StudentMarksApp:
         sort_menu.add_command(label="By Percentage (Descending)", command=lambda: self.sort_students('percentage', False))
         sort_menu.add_command(label="By Student Code (Ascending)", command=lambda: self.sort_students('code', True))
         sort_menu.add_command(label="By Student Code (Descending)", command=lambda: self.sort_students('code', False))
-        
-        # Manage menu
+
+        # Manage menu: add, delete, update operations
         manage_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Manage", menu=manage_menu)
         manage_menu.add_command(label="Add Student Record", command=self.add_student_record)
@@ -146,38 +193,53 @@ class StudentMarksApp:
     
     def create_main_display(self):
         """Create the main display area"""
-        # Main frame
-        main_frame = ttk.Frame(self.root, padding="10")
+        # Build a main frame using tk.Frame so background color is visible
+        main_frame = tk.Frame(self.root, bg=MAIN_BG, padx=10, pady=10)
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        
-        # Title
-        title_label = ttk.Label(main_frame, text="Student Marks Management System", 
-                               font=("Arial", 16, "bold"))
-        title_label.grid(row=0, column=0, pady=(0, 20))
-        
-        # Text area for displaying results
-        self.text_area = scrolledtext.ScrolledText(main_frame, width=90, height=30, 
-                                                  font=("Courier", 10))
-        self.text_area.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        
-        # Configure grid weights
+
+        # Title label at the top using tk.Label so it inherits the bg color
+        title_label = tk.Label(main_frame, text="Student Marks Management System",
+                               font=("Arial", 16, "bold"), bg=MAIN_BG)
+        title_label.grid(row=0, column=0, pady=(0, 12), sticky=tk.W)
+
+        # Control bar frame with green background to host quick action buttons
+        control_frame = tk.Frame(main_frame, bg=BUTTON_BG, pady=6)
+        control_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
+
+        # Quick-action buttons (use ttk for native look; placed on green frame)
+        ttk.Button(control_frame, text="View All", command=self.view_all_students).pack(side=tk.LEFT, padx=6)
+        ttk.Button(control_frame, text="Add", command=self.add_student_record).pack(side=tk.LEFT, padx=6)
+        ttk.Button(control_frame, text="Update", command=self.update_student_record).pack(side=tk.LEFT, padx=6)
+        ttk.Button(control_frame, text="Delete", command=self.delete_student_record).pack(side=tk.LEFT, padx=6)
+        ttk.Button(control_frame, text="Refresh", command=self.refresh_data).pack(side=tk.LEFT, padx=6)
+
+        # A read-only scrolling text widget where reports and results are shown
+        # Set its background to white so content remains readable on the blue page
+        self.text_area = scrolledtext.ScrolledText(main_frame, width=90, height=28,
+                                                  font=("Courier", 10), bg="white")
+        self.text_area.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+        # Configure grid weights so the text area expands with the window
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         main_frame.columnconfigure(0, weight=1)
-        main_frame.rowconfigure(1, weight=1)
+        main_frame.rowconfigure(2, weight=1)
     
     def refresh_data(self):
         """Refresh data from file"""
+        # Reload data from disk and update the display
         self.load_data()
         self.clear_display()
         self.display_text("Data refreshed from file.\n")
     
     def clear_display(self):
         """Clear the text display area"""
+        # Delete everything in the text widget
         self.text_area.delete(1.0, tk.END)
     
     def display_text(self, text):
         """Display text in the text area"""
+        # Insert text at the end and scroll to show it
         self.text_area.insert(tk.END, text)
         self.text_area.see(tk.END)
     
@@ -196,19 +258,20 @@ class StudentMarksApp:
         self.display_text(separator)
         
         total_percentage = 0
-        
-        # Display each student
+
+        # For each student compute stats and append a nicely formatted line
         for student in self.students:
             stats = self.calculate_student_stats(student)
-            
+
             student_line = f"{student['name']:<20} {student['code']:<8} " \
                           f"{stats['total_coursework']:<12} {stats['exam_mark']:<6} " \
                           f"{stats['percentage']:<10.1f} {stats['grade']:<6}\n"
             self.display_text(student_line)
-            
+
+            # Keep a running total of percentages for the summary
             total_percentage += stats['percentage']
-        
-        # Summary
+
+        # Summary block showing count and average percentage
         self.display_text(separator)
         avg_percentage = total_percentage / len(self.students)
         summary = f"\nSummary:\n"
@@ -239,18 +302,21 @@ class StudentMarksApp:
         self.display_text(f"Student Name: {student['name']}\n")
         self.display_text(f"Student Code: {student['code']}\n")
         self.display_text(f"Coursework Marks: {student['course_marks']}\n")
-        self.display_text(f"Total Coursework: {stats['total_coursework']}/60\n")
-        self.display_text(f"Exam Mark: {stats['exam_mark']}/100\n")
+        # Use constants in the user-facing strings where appropriate
+        self.display_text(f"Total Coursework: {stats['total_coursework']}/{COURSEWORK_MAX}\n")
+        self.display_text(f"Exam Mark: {stats['exam_mark']}/{EXAM_MAX}\n")
         self.display_text(f"Overall Percentage: {stats['percentage']:.1f}%\n")
         self.display_text(f"Grade: {stats['grade']}\n")
         
         # Detailed breakdown
         self.display_text(f"\nDetailed Breakdown:\n")
-        self.display_text(f"  Coursework: {stats['total_coursework']}/60 " \
-                         f"({(stats['total_coursework']/60)*100:.1f}%)\n")
-        self.display_text(f"  Exam: {stats['exam_mark']}/100 " \
-                         f"({(stats['exam_mark']/100)*100:.1f}%)\n")
-        self.display_text(f"  Total: {stats['total_coursework'] + stats['exam_mark']}/160\n")
+        # Detailed percentage breakdown for coursework and exam
+        self.display_text(f"  Coursework: {stats['total_coursework']}/{COURSEWORK_MAX} " \
+                 f"({(stats['total_coursework']/COURSEWORK_MAX)*100:.1f}%)\n")
+        self.display_text(f"  Exam: {stats['exam_mark']}/{EXAM_MAX} " \
+                 f"({(stats['exam_mark']/EXAM_MAX)*100:.1f}%)\n")
+        # Total uses TOTAL_POSSIBLE for clarity
+        self.display_text(f"  Total: {stats['total_coursework'] + stats['exam_mark']}/{TOTAL_POSSIBLE}\n")
     
     def show_highest_mark(self):
         """Display student with highest overall mark"""
@@ -260,10 +326,10 @@ class StudentMarksApp:
             self.display_text("No student data available.\n")
             return
         
-        # Find student with highest percentage
+        # Iterate over students and track the one with the highest percentage
         highest_student = None
         highest_percentage = -1
-        
+
         for student in self.students:
             stats = self.calculate_student_stats(student)
             if stats['percentage'] > highest_percentage:
@@ -291,10 +357,10 @@ class StudentMarksApp:
             self.display_text("No student data available.\n")
             return
         
-        # Find student with lowest percentage
+        # Iterate and find the minimum percentage
         lowest_student = None
         lowest_percentage = 101
-        
+
         for student in self.students:
             stats = self.calculate_student_stats(student)
             if stats['percentage'] < lowest_percentage:
@@ -320,7 +386,7 @@ class StudentMarksApp:
             messagebox.showwarning("Warning", "No student data available.")
             return
         
-        # Create a copy to avoid modifying original during calculation
+        # Pair each student with its computed stats so we can sort by percentage
         students_with_stats = []
         for student in self.students:
             stats = self.calculate_student_stats(student)
@@ -334,13 +400,13 @@ class StudentMarksApp:
         elif sort_by == 'code':
             students_with_stats.sort(key=lambda x: x[0]['code'], reverse=not ascending)
         
-        # Update the main students list with sorted order
+        # Replace students list with the sorted order (extract the student element)
         self.students = [item[0] for item in students_with_stats]
-        
-        # Save the sorted data
+
+        # Persist the new ordering to disk
         self.save_data()
-        
-        # Display sorted results
+
+        # Show a header and display the sorted table
         self.clear_display()
         direction = "Ascending" if ascending else "Descending"
         self.display_text(f"STUDENT RECORDS SORTED BY {sort_by.upper()} ({direction})\n")
@@ -385,52 +451,56 @@ class StudentMarksApp:
         exam_entry.grid(row=7, column=1, sticky=tk.W, padx=5, pady=5)
         
         def save_student():
+            """Validate inputs from the Add dialog and append the new record."""
             try:
-                # Validate inputs
+                # Parse form inputs (may raise ValueError)
                 code = int(code_entry.get())
                 name = name_entry.get().strip()
                 mark1 = int(mark1_entry.get())
                 mark2 = int(mark2_entry.get())
                 mark3 = int(mark3_entry.get())
                 exam = int(exam_entry.get())
-                
+
+                # Simple validation for required name
                 if not name:
                     messagebox.showerror("Error", "Student name cannot be empty.")
                     return
-                
-                # Check if code already exists
+
+                # Ensure student code is unique
                 if any(student['code'] == code for student in self.students):
                     messagebox.showerror("Error", "Student code already exists.")
                     return
-                
-                # Validate marks
+
+                # Validate that coursework marks and exam fall within allowed ranges
                 if not (0 <= mark1 <= 20 and 0 <= mark2 <= 20 and 0 <= mark3 <= 20):
                     messagebox.showerror("Error", "Coursework marks must be between 0 and 20.")
                     return
-                
+
                 if not (0 <= exam <= 100):
                     messagebox.showerror("Error", "Exam mark must be between 0 and 100.")
                     return
-                
-                # Add new student
+
+                # Construct and append the new student record
                 new_student = {
                     'code': code,
                     'name': name,
                     'course_marks': [mark1, mark2, mark3],
                     'exam_mark': exam
                 }
-                
+
                 self.students.append(new_student)
-                
+
+                # Try to save; if successful, close dialog and refresh view
                 if self.save_data():
                     messagebox.showinfo("Success", "Student record added successfully!")
                     add_window.destroy()
                     self.view_all_students()
                 else:
-                    # Remove the student if save failed
+                    # If saving failed, remove the in-memory record to keep data consistent
                     self.students.remove(new_student)
-                    
+
             except ValueError:
+                # Handles non-integer input parsing attempts
                 messagebox.showerror("Error", "Please enter valid numeric values.")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to add student: {str(e)}")
@@ -449,19 +519,21 @@ class StudentMarksApp:
         student_index = self.select_student_dialog("Select Student to Delete")
         if student_index is not None:
             student = self.students[student_index]
-            
+
+            # Confirm destructive action with user
             confirm = messagebox.askyesno(
-                "Confirm Delete", 
+                "Confirm Delete",
                 f"Are you sure you want to delete {student['name']} (Code: {student['code']})?"
             )
-            
+
             if confirm:
+                # Remove from in-memory list and attempt to save
                 deleted_student = self.students.pop(student_index)
                 if self.save_data():
                     messagebox.showinfo("Success", f"Student {deleted_student['name']} deleted successfully!")
                     self.view_all_students()
                 else:
-                    # Restore the student if save failed
+                    # On failure, restore the record to keep memory and disk consistent
                     self.students.insert(student_index, deleted_student)
                     messagebox.showerror("Error", "Failed to delete student record.")
     
@@ -527,38 +599,40 @@ class StudentMarksApp:
         exam_entry.grid(row=12, column=1, sticky=tk.W, padx=5, pady=5)
         
         def save_updates():
+            """Validate updated fields and persist changes to disk."""
             try:
                 name = name_entry.get().strip()
                 mark1 = int(mark1_entry.get())
                 mark2 = int(mark2_entry.get())
                 mark3 = int(mark3_entry.get())
                 exam = int(exam_entry.get())
-                
+
                 if not name:
                     messagebox.showerror("Error", "Student name cannot be empty.")
                     return
-                
-                # Validate marks
+
+                # Validate numeric ranges
                 if not (0 <= mark1 <= 20 and 0 <= mark2 <= 20 and 0 <= mark3 <= 20):
                     messagebox.showerror("Error", "Coursework marks must be between 0 and 20.")
                     return
-                
+
                 if not (0 <= exam <= 100):
                     messagebox.showerror("Error", "Exam mark must be between 0 and 100.")
                     return
-                
-                # Update student record
+
+                # Apply changes to the in-memory record
                 self.students[student_index]['name'] = name
                 self.students[student_index]['course_marks'] = [mark1, mark2, mark3]
                 self.students[student_index]['exam_mark'] = exam
-                
+
+                # Try to persist; on success refresh the view, otherwise inform user
                 if self.save_data():
                     messagebox.showinfo("Success", "Student record updated successfully!")
                     update_window.destroy()
                     self.view_all_students()
                 else:
                     messagebox.showerror("Error", "Failed to update student record.")
-                    
+
             except ValueError:
                 messagebox.showerror("Error", "Please enter valid numeric values.")
             except Exception as e:
@@ -579,25 +653,28 @@ class StudentMarksApp:
         
         ttk.Label(selection_window, text="Select Student:").pack(pady=10)
         
-        # Create combobox with student names and codes
+        # Create a combobox listing each student by 'code - name'
         student_options = [f"{s['code']} - {s['name']}" for s in self.students]
         student_var = tk.StringVar()
-        student_combo = ttk.Combobox(selection_window, textvariable=student_var, 
+        student_combo = ttk.Combobox(selection_window, textvariable=student_var,
                                    values=student_options, state="readonly")
         student_combo.pack(pady=10)
-        
-        selected_index = [None]  # Use list to store mutable value
-        
+
+        # We'll capture the selected index via a single-element list so the
+        # nested confirm_selection() can mutate it (closure over the list).
+        selected_index = [None]
+
         def confirm_selection():
+            # Set the selected index from the combobox and close the dialog
             selected_index[0] = student_combo.current()
             selection_window.destroy()
-        
-        ttk.Button(selection_window, text="Select", 
+
+        ttk.Button(selection_window, text="Select",
                   command=confirm_selection).pack(pady=10)
-        
-        # Wait for window to close
+
+        # Block until the selection window is closed, then return the index
         self.root.wait_window(selection_window)
-        
+
         return selected_index[0]
 
 def main():
