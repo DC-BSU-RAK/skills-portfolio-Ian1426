@@ -38,7 +38,7 @@ class JokeTellingAssistant:
 
     def __init__(self, root: tk.Tk):
         self.root = root
-        self.root.title("JG")
+        self.root.title("Untitled JG")
         self.root.geometry("500x300")
         self.root.resizable(True, True)
         self.root.configure(bg=MAIN_BG)
@@ -84,7 +84,7 @@ class JokeTellingAssistant:
 
     def create_widgets(self) -> None:
         """Create and layout the GUI widgets."""
-        title_label = tk.Label(self.root, text="UNTITLED JG",
+        title_label = tk.Label(self.root, text="Alexa tell me a Joke",
                                font=("Arial", 16, "bold"), bg=MAIN_BG)
         title_label.pack(pady=10)
 

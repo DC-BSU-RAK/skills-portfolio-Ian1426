@@ -16,7 +16,7 @@ the runtime behavior.
 
 # Configuration constants: centralize common values so they're easy to change
 DATA_FILE = "studentMarks.txt"  # file used to persist student records
-COURSEWORK_MAX = 60  # total possible coursework marks (3 items x 20 each)
+COURSEWORK_MAX = 60  # total possible coursework marks (3 items x 20 each) 
 EXAM_MAX = 100      # max exam mark
 TOTAL_POSSIBLE = COURSEWORK_MAX + EXAM_MAX  # combined total for percentage calcs
 # UI theme colors

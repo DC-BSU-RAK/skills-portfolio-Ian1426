@@ -52,15 +52,15 @@ class ArithmeticQuiz:
         btn_area = tk.Frame(self.main_frame, bg=BUTTON_BG)
         btn_area.pack(pady=5, fill=tk.X)
 
-        easy_btn = ttk.Button(btn_area, text="1. Basic (Single-digit numbers)",
+        easy_btn = ttk.Button(btn_area, text="1. Easy (Single-digit numbers)",
                      command=lambda: self.startQuiz("easy"))
         easy_btn.pack(pady=5, fill=tk.X, padx=5)
 
-        moderate_btn = ttk.Button(btn_area, text="2. Intermediate (Double-digit numbers)",
+        moderate_btn = ttk.Button(btn_area, text="2. Moderate (Double-digit numbers)",
                      command=lambda: self.startQuiz("moderate"))
         moderate_btn.pack(pady=5, fill=tk.X, padx=5)
 
-        advanced_btn = ttk.Button(btn_area, text="3. Expert (4-digit numbers)",
+        advanced_btn = ttk.Button(btn_area, text="3. Advanced (4-digit numbers)",
                      command=lambda: self.startQuiz("advanced"))
         advanced_btn.pack(pady=5, fill=tk.X, padx=5)
         
