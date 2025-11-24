@@ -28,7 +28,7 @@ class StudentMarksApp:
         # Keep a reference to the main Tk root window
         self.root = root
         # Set window title and a reasonable default size
-        self.root.title("Student Marks Management System")
+        self.root.title("Student Records")
         self.root.geometry("900x700")
 
         # In-memory list of student dicts. Each entry has keys:
