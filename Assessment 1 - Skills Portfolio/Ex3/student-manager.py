@@ -19,9 +19,9 @@ DATA_FILE = "studentMarks.txt"  # file used to persist student records
 COURSEWORK_MAX = 60  # total possible coursework marks (3 items x 20 each) 
 EXAM_MAX = 100      # max exam mark
 TOTAL_POSSIBLE = COURSEWORK_MAX + EXAM_MAX  # combined total for percentage calcs
-# UI theme colors
-MAIN_BG = "#e6f2ff"   # soft blue background for main area
-BUTTON_BG = "#d9f2e6" # soft green background for button/control area
+# UI colors
+MAIN_BG = "#0ff3e0"   # soft light blue
+BUTTON_BG = "#1de5ff" # soft light green
 
 class StudentMarksApp:
     def __init__(self, root):
