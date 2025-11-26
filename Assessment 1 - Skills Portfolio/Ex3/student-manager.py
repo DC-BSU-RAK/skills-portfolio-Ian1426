@@ -2,18 +2,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 import os
 
-"""Student Marks Management GUI
-
-This module provides a small Tkinter application to manage student records
-and marks. The UI shows records, allows adding/updating/deleting students,
-and computes simple statistics. The edits here are purely to make the code
-more readable (constants, docstrings) while preserving original behaviour.
-
-The user requested comments explaining the code; inline comments are
-added throughout to clarify intent and important steps without changing
-the runtime behavior.
-"""
-
 # Configuration constants: centralize common values so they're easy to change
 DATA_FILE = "studentMarks.txt"  # file used to persist student records
 COURSEWORK_MAX = 60  # total possible coursework marks (3 items x 20 each) 
