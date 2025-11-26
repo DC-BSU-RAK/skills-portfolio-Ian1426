@@ -3,8 +3,8 @@ from tkinter import messagebox, ttk
 import random
 
 # UI colors
-MAIN_BG = '#e6f4ff'   # soft light blue
-BUTTON_BG = '#e6ffe6' # soft light green
+MAIN_BG = "#0ff3e0"   # soft light blue
+BUTTON_BG = "#1de5ff" # soft light green
 
 class ArithmeticQuiz:
     def __init__(self, root):   # Initializing the main application window
@@ -66,7 +66,7 @@ class ArithmeticQuiz:
         
         # Guide Instructions
         instructions = tk.Label(self.main_frame,
-                    text="\n• 10 questions per quiz\n• 10 points for correct first attempt\n• 5 points for correct second attempt",
+                    text="\n• There are 10 questions per level\n• Get 10 points for correct first attempt\n• Get 5 points for correct second attempt",
                     justify=tk.LEFT, bg=MAIN_BG)
         instructions.pack(pady=20)
     
