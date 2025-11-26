@@ -29,12 +29,6 @@ class JokeTellingAssistant:
     - "Quit": confirms and exits the app.
     """
 
-    # Built-in fallback jokes used when a file isn't available
-    _FALLBACK_JOKES: List[str] = [
-        "Why did the chicken cross the road? To get to the other side!",
-        "I told my computer I needed a break — it said no problem, it needed one too.",
-        "Why don't programmers like nature? It has too many bugs."
-    ]
 
     def __init__(self, root: tk.Tk):
         self.root = root
