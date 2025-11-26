@@ -264,7 +264,7 @@ class ArithmeticQuiz:
         elif percentage >= 50:
             return "D"
         else:
-            return "F"
+            return "F"  
     
     def clearFrame(self):                       #clearing the main frame
         """Clear all widgets from the main frame"""

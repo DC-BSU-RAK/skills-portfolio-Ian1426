@@ -1,13 +1,6 @@
 import os
 import sys
 
-"""Console-mode student manager extension
-
-This module provides a simple console (terminal) student manager. It includes
-helpers to load/save students, perform CRUD operations, sort and compute
-basic statistics. The user requested additional inline comments explaining
-the code; those comments are added throughout.
-"""
 
 # Terminal color helpers: use ANSI escape sequences where supported.
 # Some Windows consoles require enabling VT processing; we attempt that.
